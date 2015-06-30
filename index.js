@@ -5,6 +5,7 @@ var fs = require('fs');
 var backup_button_stats = "button_presses.txt";
 var users_online = 0;
 var stat_button_pressed = 0;
+app.set('port', (process.env.PORT || 8000));
 
 fs.exists(backup_button_stats, function (exists) {
     "use strict";
@@ -49,7 +50,7 @@ io.on('connection', function (socket) {
   });
 });
 
-http.listen(8000, function () {
+http.listen(app.get('port'), function () {
     "use strict"
     console.log('listening on *:8000');
 });
