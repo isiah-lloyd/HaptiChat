@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <title>HaptiChat</title>
+  </head>
+  <body>
+    <button name="Vibrate">Vibrate</button>
+    <p>Users Online: <span id="users_online"></span></p>
+    <p>Global Vibrates: <span id="button_presses"></span></p>
+    <p>Vibrates by you: <span id="local_button_clicks"></span><span> (<span id="percent_to_whole"></span><span>% of total global vibrates)</span></span></p>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      var local_button_clicks;
+      var global_button_pressed;
+      function updateLocalStats(){
+        $('#local_button_clicks').text(localStorage.getItem('local_button_clicks'));
+        var percent_to_whole = Math.round((local_button_clicks/global_button_pressed)*100);
+        $('#percent_to_whole').text(percent_to_whole);
+      }
+      socket.on('users_online', function(users_online){
+        $('#users_online').text(users_online);
+      });
+      socket.on('stat_button_pressed', function(stat_button_pressed){
+        $('#button_presses').text(stat_button_pressed);
+         global_button_pressed = stat_button_pressed;
+         updateLocalStats();
+      });
+      socket.on('vibrate', function(){
+        window.navigator.vibrate(200);
+      });
+      if(localStorage.getItem("local_button_clicks") === null){
+        local_button_clicks = 0;
+        localStorage.setItem("local_button_clicks", local_button_clicks);
+        updateLocalStats();
+      }
+      else {
+        local_button_clicks = localStorage.getItem("local_button_clicks");
+        updateLocalStats();
+      }
+      $("button[name='Vibrate']").click(function() {
+        local_button_clicks++;
+        localStorage.setItem("local_button_clicks", local_button_clicks);
+        updateLocalStats();
+        socket.emit('button_press');
+        });
+
+    </script>
+  </body>
+</html>
