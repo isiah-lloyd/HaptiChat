@@ -8,9 +8,11 @@
     <p>Users Online: <span id="users_online"></span></p>
     <p>Global Vibrates: <span id="button_presses"></span></p>
     <p>Vibrates by you: <span id="local_button_clicks"></span><span> (<span id="percent_to_whole"></span><span>% of total global vibrates)</span></span></p>
+    <script src="https://raw.githubusercontent.com/ded/bowser/master/bowser.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+      if (!bowser.android && !bowser.chrome)
       var socket = io();
       var local_button_clicks;
       var global_button_pressed;
